@@ -6,6 +6,9 @@
 
 package clasesbase;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -17,8 +20,7 @@ import java.util.Random;
  */
 public class Matematica {
     
-    private double generarRandomDouble(int num){
-        
+    static double generarRandomDouble(int num){
         Random rndNumbers = new Random(num);
         double rndNumber = rndNumbers.nextGaussian() * 1000;
         String pattern = "######.##";
@@ -28,105 +30,88 @@ public class Matematica {
         return montoFinal;
     }
     
-    private int generarRandomInteger(int num){
-        
+    static int generarRandomInteger(int num){
         Random rndNumbers = new Random(num);
         double rndNumber = rndNumbers.nextGaussian() * 1000;
         int numeroFinal= (int) rndNumber;
-       
         return numeroFinal;
     }
+
+   static String customFormat(String pattern, double value) {
+    DecimalFormat myFormatter = new DecimalFormat(pattern,  new DecimalFormatSymbols(Locale.US));
+    String output = myFormatter.format(value);
+    return output;
+  }
+   
+   static String customFormat(String pattern, int value) {
+    DecimalFormat myFormatter = new DecimalFormat(pattern,  new DecimalFormatSymbols(Locale.US));
+    String output = myFormatter.format(value);
+    return output;
+  }
     
-    private String doubleAFormatear(double monto){
-        String pattern = "###,###.##";
-        DecimalFormat f = new DecimalFormat(pattern, new DecimalFormatSymbols(Locale.US));
-        String cadena= f.format(monto);
-        return cadena;
-    }
-    
-    private String integerAFormatear(int monto){
-        String pattern = "###,###";
-        DecimalFormat f = new DecimalFormat(pattern, new DecimalFormatSymbols(Locale.US));
-        String cadena= f.format(monto);
-        return cadena;
-    }
-    
-    public void mostrarRandonDouble(){
+    public void mostrarRandonDouble(String pattern){
         for (int i = 0; i < 3; i++) {
-            double randomDouble= this.generarRandomDouble(i+999);
-            System.out.println("randomDouble: " + randomDouble + "  Formato:" + this.doubleAFormatear(randomDouble));
+            double randomDouble= generarRandomDouble(i+999);
+            System.out.println("randomDouble: " + randomDouble + "  Formato:" + customFormat(pattern, randomDouble));
         }
     }
-    public void mostrarRandonInteger(){
+    public void mostrarRandonInteger(String pattern){
         for (int i = 0; i < 3; i++) {
             int randomInteger= this.generarRandomInteger(i+999);
-            System.out.println("randomInteger: " + randomInteger + "  Formato:" + this.integerAFormatear(randomInteger) );
+            System.out.println("randomInteger: " + randomInteger + "  Formato:" + customFormat(pattern, randomInteger) );
         }
+    }
+    
+    static BigDecimal sumarBigDecimal(double num1, double num2, int precisionDecimal){
+        // create MathContext object with 4 precision
+//        MathContext mc = new MathContext(4);
+        BigDecimal numUno= new BigDecimal(num1);
+        BigDecimal sumar;
+        sumar= numUno.add(new BigDecimal(num2));
+        return sumar.setScale(precisionDecimal, RoundingMode.HALF_UP);
+    }
+    
+    static BigDecimal restarBigDecimal(double num1, double num2, int precisionDecimal){
+        BigDecimal numUno= new BigDecimal(num1);
+        BigDecimal restar;
+        restar= numUno.subtract(new BigDecimal(num2));
+        return restar.setScale(precisionDecimal, RoundingMode.HALF_UP);
+    }
+    
+    static BigDecimal multiplicarBigDecimal(double num1, double num2, int precisionDecimal){
+        BigDecimal numUno= new BigDecimal(num1);
+        BigDecimal multiplicar;
+        multiplicar= numUno.multiply(new BigDecimal(num2));
+        return multiplicar.setScale(precisionDecimal, RoundingMode.HALF_UP);
+    }
+    
+    static BigDecimal dividirBigDecimal(double num1, double num2, int precisionDecimal){
+        BigDecimal numUno= new BigDecimal(num1);
+        BigDecimal dividir;
+        dividir= numUno.divide(new BigDecimal(num2), precisionDecimal, RoundingMode.HALF_UP);
+        return dividir; 
     }
     
     public static void main(String[] args) {
         Matematica matematica= new Matematica();
-//        matematica.mostrarRandonDouble();
-        matematica.mostrarRandonInteger();
-//        matematica.claseMath();
-        
-        
+        String patternUno= "###,###.####";
+        String patternDos= "000000.00000";
+        matematica.mostrarRandonDouble(patternUno);
+        matematica.mostrarRandonInteger(patternDos);
+        String sumarBigDecimal= Matematica.sumarBigDecimal(1040.739, 30.12, 5).toString();
+        System.out.println("Sumar BigDecimal: " + sumarBigDecimal);
+        double sumar= Matematica.sumarBigDecimal(1040.739, 30.12, 5).doubleValue();    
+        System.out.println(patternUno + " " + Matematica.customFormat(patternUno, sumar)); 
+        System.out.println(patternDos + " " + Matematica.customFormat(patternDos, sumar)); 
+        String restarBigDecimal= Matematica.restarBigDecimal(40.75, 30.121, 4).toString();
+        System.out.println("Sumar BigDecimal: " + restarBigDecimal);
+        double multiplicar= Matematica.multiplicarBigDecimal(140.739, 30.12, 5).doubleValue(); 
+        System.out.println("Multiplicar " + patternUno + " " + Matematica.customFormat(patternUno, multiplicar)); 
+        double dividir= Matematica.dividirBigDecimal(1540.739, 3.12, 5).doubleValue(); 
+        System.out.println(dividir);
+        System.out.println("Dividir " + patternUno + " " + Matematica.customFormat(patternUno, dividir)); 
         
     }
     
-    private void claseMath(){
-        System.out.println("****************** CLASE MATH ************************+");
-        System.out.print( "2+3 es ");
-        System.out.println( 2+3 );
-        System.out.print( "2*3 es ");
-        System.out.println( 2*3 );
-        System.out.print( "2-3 es ");
-        System.out.println( 2-3 );
-        System.out.print( "3/2 es ");
-        System.out.println( 3/2 );
-        System.out.print( "3,0/2 es ");
-        System.out.println( 3.0/2 );
-        System.out.print( "El resto de dividir 13 entre 4 es ");
-        System.out.println( 13%4 );
- 
-        System.out.print( "Un número al azar entre 0 y 1: ");
-        System.out.println( Math.random() );
-        System.out.print( "Un número al azar entre 50 y 150: ");
-        System.out.println( (int)(Math.random()*100+50) );
-        System.out.print( "Una letra minúscula al azar: ");
-        System.out.println( (char)(Math.random()*26+'a') );
- 
-        System.out.print( "Coseno de PI radianes: ");
-        System.out.println( Math.cos(Math.PI) );
-        System.out.print( "Seno de 45 grados: ");
-        System.out.println( Math.sin(Math.toRadians(45)) );
-        System.out.print( "Arco cuya tangente es 1: ");
-        System.out.println( Math.toDegrees(Math.atan(1)) );
- 
-        System.out.print( "Raíz cuadrada de 36: ") ;
-        System.out.println( Math.sqrt(36) ) ;
-        System.out.print( "Cinco elevado al cubo: "); 
-        System.out.println( Math.pow(5.0,3.0) ) ;
-        System.out.print( "Exponencial de 2: ") ;
-        System.out.println( Math.exp(2) ) ;
-        System.out.print( "Logaritmo de 2,71828: "); 
-        System.out.println( Math.log(2.71828) );
- 
-        System.out.print( "Mayor valor entre 2 y 3: ");
-        System.out.println( Math.max(2,3) );
-        System.out.print( "Valor absoluto de -4,5: ");
-        System.out.println( Math.abs(-4.5) );
-        System.out.print( "Menor entero más cercano a -4,5: ");
-        System.out.println( Math.floor(-4.5) );
-        System.out.print( "Mayor entero más cercano a -4,5: ");
-        System.out.println( Math.ceil(-4.5) );
-        System.out.print( "Redondeando -4,5 con ROUND: ");
-        System.out.println( Math.round(-4.5) );
-        System.out.print( "Redondeando 4,5 con ROUND: ");
-        System.out.println( Math.round(4.5) );
-        System.out.print( "Redondeando -4,6 con RINT: ");
-        System.out.println( Math.rint(-4.6) );
-        System.out.print( "Redondeando -4,5 con RINT: ");
-        System.out.println( Math.rint(4.5) );
-    }
+   
 }
