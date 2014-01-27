@@ -18,6 +18,8 @@ public class Cadena {
     
     
     
+ 
+    
  static List<String> cortarPalabras (String texto, int cantidadDeLetras){
         List<String> lstFinal= new ArrayList<String>();
         StringBuilder builder= new StringBuilder();
